@@ -1,0 +1,40 @@
+# Maintainer: Erin Allison <erin@eallison.us>
+
+pkgname=vgpu_unlock-rs
+pkgver=2.0.0
+pkgrel=1
+pkgdesc='NVIDIA vGPU Unlock - Rust Version'
+arch=('x86_64')
+url='https://github.com/mbilker/vgpu_unlock-rs'
+license=('mit')
+makedepends=('rust')
+options=('emptydirs')
+provides=('vgpu_unlock')
+conflicts=('vgpu_unlock')
+
+install=$pkgname.install
+
+source=('git+https://github.com/mbilker/vgpu_unlock-rs.git#commit=8bb4f47'
+    'profile_override_template.toml'
+    'vgpu_unlock-rs.conf')
+
+sha256sums=('SKIP'
+    '1481ac8edb4768b686a0b2aaf360a1ee991ad357289f8b164a995f44123e8721'
+    'b1228a86060623366f9b2612f53f32bcbb05f701b34e9dede8b2abb5bb55aecf')
+
+build() {
+    cd "${srcdir}/vgpu_unlock-rs"
+
+    cargo build --release
+}
+
+package() {
+    depends=('nvidia-merged-utils')
+
+    install -Dm644 "${srcdir}/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" "${pkgdir}/usr/lib/libvgpu_unlock_rs.so"
+    install -Dm644 "${srcdir}/profile_override_template.toml" "${pkgdir}/usr/share/vgpu_unlock/profile_override.toml"
+    install -Dm644 "${srcdir}/vgpu_unlock-rs.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpud.service.d/vgpu_unlock-rs.conf"
+    install -Dm644 "${srcdir}/vgpu_unlock-rs.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpu-mgr.service.d/vgpu_unlock-rs.conf"
+
+    mkdir -p "${pkgdir}/etc/vgpu_unlock"
+}

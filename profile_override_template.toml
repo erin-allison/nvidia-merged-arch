@@ -1,0 +1,15 @@
+[profile.nvidia-57]
+num_displays = 1
+display_width = 3840
+display_height = 2160
+max_pixels = 8294400
+cuda_enabled = 1
+frl_enabled = 0
+
+[mdev.xxx]
+num_displays = 1
+display_width = 3840
+display_height = 2160
+max_pixels = 8294400
+cuda_enabled = 1
+frl_enabled = 0
