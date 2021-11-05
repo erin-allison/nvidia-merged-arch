@@ -1,0 +1,5 @@
+*.run
+*.tar.zst
+pkg/
+src/
+out/
