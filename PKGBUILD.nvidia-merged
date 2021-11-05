@@ -34,9 +34,7 @@ prepare() {
     cd "${_pkg}"
 
     sed -i '/Environment=LD_PRELOAD.*/D' init-scripts/systemd/nvidia-vgpud.service
-    sed -i 's/WantedBy=multi-user.target/WantedBy=default.target/' init-scripts/systemd/nvidia-vgpud.service
     sed -i '/Environment=LD_PRELOAD.*/D' init-scripts/systemd/nvidia-vgpu-mgr.service
-    sed -i 's/WantedBy=multi-user.target/WantedBy=default.target/' init-scripts/systemd/nvidia-vgpu-mgr.service
 
     cd kernel
     sed -i "s/__VERSION_STRING/${pkgver}/" dkms.conf
@@ -219,9 +217,9 @@ package_nvidia-merged-utils() {
     install -D -m644 "${srcdir}/cvgpu.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpud.service.d/cvgpu.conf"
     install -D -m644 "${srcdir}/cvgpu.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpu-mgr.service.d/cvgpu.conf"
     install -D -m644 "${srcdir}/nvidia-vgpu.conf" "${pkgdir}/usr/lib/systemd/system/libvirtd.service.d/nvidia-vgpu.conf"
-    mkdir -p "${pkgdir}/usr/lib/systemd/system/default.target.wants/"
-    ln -s /usr/lib/systemd/system/nvidia-vgpud.service "${pkgdir}/usr/lib/systemd/system/default.target.wants/nvidia-vgpud.service"
-    ln -s /usr/lib/systemd/system/nvidia-vgpu-mgr.service "${pkgdir}/usr/lib/systemd/system/default.target.wants/nvidia-vgpu-mgr.service"
+    mkdir -p "${pkgdir}/usr/lib/systemd/system/multi-user.target.wants/"
+    ln -s /usr/lib/systemd/system/nvidia-vgpud.service "${pkgdir}/usr/lib/systemd/system/multi-user.target.wants/nvidia-vgpud.service"
+    ln -s /usr/lib/systemd/system/nvidia-vgpu-mgr.service "${pkgdir}/usr/lib/systemd/system/multi-user.target.wants/nvidia-vgpu-mgr.service"
 
     # nvidia-cuda-mps
     install -D -m755 nvidia-cuda-mps-server "${pkgdir}/usr/bin/nvidia-cuda-mps-server"
