@@ -2,7 +2,7 @@
 
 pkgname=('nvidia-merged' 'lib32-nvidia-merged-utils' 'lib32-opencl-nvidia-merged' 'nvidia-merged-dkms' 'nvidia-merged-settings' 'nvidia-merged-utils' 'opencl-nvidia-merged')
 pkgver=460.73.01
-pkgrel=2
+pkgrel=3
 arch=('x86_64')
 makedepends=('patchelf' 'gcc' 'rust')
 url='https://docs.google.com/document/d/1pzrWJ9h-zANCtyqRgS7Vzla0Y8Ea2-5z2HEi4X75d2Q/'
@@ -91,6 +91,8 @@ package_nvidia-merged-settings() {
     provides=('nvidia-settings')
 
     cd "${_pkg}"
+
+    sed -i 's|__UTILS_PATH__|/usr/bin|' nvidia-settings.desktop
 
     install -D -m755 nvidia-settings "${pkgdir}/usr/bin/nvidia-settings"
     install -D -m644 "libnvidia-gtk3.so.${pkgver}" "${pkgdir}/usr/lib/libnvidia-gtk3.so.${pkgver}"
