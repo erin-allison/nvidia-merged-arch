@@ -1,8 +1,8 @@
 # Nvidia vGPU-Merged Packages for Arch Linux
 Use Nvidia vGPU _and_ GeForce functions of consumer-grade NVIDIA GPUs.
 
-This repository contains scripts for building all components of the "merged" driver package into drop-in replacements for the Arch Linux NVIDIA packages. It adds the following additional functions by means of patches/drop-ins:
- - Patched `nvidia-smi` to support recognizing consumer GPUs as vGPU-capable (uses cvgpu.c)
+This repository contains scripts for building all components of the "merged" driver package into drop-in replacements for the Arch Linux NVIDIA packages. It adds the following additional functions by means of scripts/drop-ins:
+ - Wrapper for `nvidia-smi` to support recognizing consumer GPUs as vGPU-capable (uses cvgpu.c)
  - Dependency re-ordering to ensure `libvirtd`, if installed, will start _after_ the NVIDIA vGPU services.
 
 ## Important
