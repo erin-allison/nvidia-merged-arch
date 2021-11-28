@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+for a in $*
+do
+  case $a in
+    vgpu)
+      export LD_PRELOAD="/usr/lib/nvidia/cvgpu.o"
+      ;;
+  esac
+done
+
+exec /usr/lib/nvidia/nvidia-smi.orig $@
+

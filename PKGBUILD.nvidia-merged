@@ -2,20 +2,21 @@
 
 pkgname=('nvidia-merged' 'lib32-nvidia-merged-utils' 'lib32-opencl-nvidia-merged' 'nvidia-merged-dkms' 'nvidia-merged-settings' 'nvidia-merged-utils' 'opencl-nvidia-merged')
 pkgver=460.73.01
-pkgrel=3
+pkgrel=4
 arch=('x86_64')
-makedepends=('patchelf' 'gcc' 'rust')
+makedepends=('gcc' 'rust')
 url='https://docs.google.com/document/d/1pzrWJ9h-zANCtyqRgS7Vzla0Y8Ea2-5z2HEi4X75d2Q/'
 license=('custom')
 options=('!strip')
 _pkg="NVIDIA-Linux-${CARCH}-${pkgver}-grid-vgpu-kvm-v5"
 _vgpuver=460.73.02
-source=("${_pkg}.run" 'nvidia-drm-outputclass.conf' 'cvgpu.conf' 'nvidia-vgpu.conf'
+source=("${_pkg}.run" 'nvidia-drm-outputclass.conf' 'cvgpu.conf' 'nvidia-vgpu.conf' 'nvidia-smi'
     'https://gist.githubusercontent.com/HiFiPhile/b3267ce1e93f15642ce3943db6e60776/raw/ab7ad3b2700b25150b1b16e9b3c4aa6d46b69099/cvgpu.c')
 sha256sums=('0bc28cf13c1a4d8845c7f8987974e04bd52734321bb8db526c6938530ad12c71'
     'be99ff3def641bb900c2486cce96530394c5dc60548fc4642f19d3a4c784134d'
     '6e99e446fdb4583d57658bce97b1ff66e45891a9fe089a81f5ab8fea7ab4d763'
     '5ea0d9edfcf282cea9b204291716a9a4d6d522ba3a6bc28d78edf505b6dc7949'
+    '17a87fcace96fb8dedd19bbe1ee2f8dea6c743338ca5d851456797d319262a23'
     '1afd782be6409fbfe91b93853bebdab4bf8bc014e3a69b362335308e437b10ab')
 
 create_links() {
@@ -205,10 +206,10 @@ package_nvidia-merged-utils() {
 
     # nvidia-smi
     gcc -fPIC -shared -o "${srcdir}/cvgpu.o" "${srcdir}/cvgpu.c"
-    install -D -m755 nvidia-smi "${pkgdir}/usr/bin/nvidia-smi"
+    install -D -m755 nvidia-smi "${pkgdir}/usr/lib/nvidia/nvidia-smi.orig"
     install -D -m644 nvidia-smi.1.gz "${pkgdir}/usr/share/man/man1/nvidia-smi.1.gz"
     install -D -m755 "${srcdir}/cvgpu.o" "${pkgdir}/usr/lib/nvidia/cvgpu.o"
-    patchelf --add-needed /usr/lib/nvidia/cvgpu.o "${pkgdir}/usr/bin/nvidia-smi"
+    install -D -m755 "${srcdir}/nvidia-smi" "${pkgdir}/usr/bin/nvidia-smi"
 
     # nvidia-vgpu
     install -D -m755 nvidia-vgpud "${pkgdir}/usr/bin/nvidia-vgpud"
