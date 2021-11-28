@@ -2,7 +2,7 @@
 
 pkgname=vgpu_unlock-rs
 pkgver=2.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc='NVIDIA vGPU Unlock - Rust Version'
 arch=('x86_64')
 url='https://github.com/mbilker/vgpu_unlock-rs'
@@ -33,8 +33,8 @@ package() {
 
     install -Dm644 "${srcdir}/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" "${pkgdir}/usr/lib/libvgpu_unlock_rs.so"
     install -Dm644 "${srcdir}/profile_override_template.toml" "${pkgdir}/usr/share/vgpu_unlock/profile_override.toml"
-    install -Dm644 "${srcdir}/vgpu_unlock-rs.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpud.service.d/vgpu_unlock-rs.conf"
-    install -Dm644 "${srcdir}/vgpu_unlock-rs.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpu-mgr.service.d/vgpu_unlock-rs.conf"
+    install -Dm644 "${srcdir}/vgpu_unlock-rs.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpud.service.d/30-vgpu_unlock-rs.conf"
+    install -Dm644 "${srcdir}/vgpu_unlock-rs.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpu-mgr.service.d/30-vgpu_unlock-rs.conf"
 
     mkdir -p "${pkgdir}/etc/vgpu_unlock"
 }
