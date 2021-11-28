@@ -2,7 +2,7 @@
 
 pkgname=('nvidia-merged' 'lib32-nvidia-merged-utils' 'lib32-opencl-nvidia-merged' 'nvidia-merged-dkms' 'nvidia-merged-settings' 'nvidia-merged-utils' 'opencl-nvidia-merged')
 pkgver=460.73.01
-pkgrel=4
+pkgrel=5
 arch=('x86_64')
 makedepends=('gcc' 'rust')
 url='https://docs.google.com/document/d/1pzrWJ9h-zANCtyqRgS7Vzla0Y8Ea2-5z2HEi4X75d2Q/'
@@ -220,9 +220,6 @@ package_nvidia-merged-utils() {
     install -D -m644 "${srcdir}/cvgpu.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpud.service.d/cvgpu.conf"
     install -D -m644 "${srcdir}/cvgpu.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpu-mgr.service.d/cvgpu.conf"
     install -D -m644 "${srcdir}/nvidia-vgpu.conf" "${pkgdir}/usr/lib/systemd/system/libvirtd.service.d/nvidia-vgpu.conf"
-    mkdir -p "${pkgdir}/usr/lib/systemd/system/multi-user.target.wants/"
-    ln -s /usr/lib/systemd/system/nvidia-vgpud.service "${pkgdir}/usr/lib/systemd/system/multi-user.target.wants/nvidia-vgpud.service"
-    ln -s /usr/lib/systemd/system/nvidia-vgpu-mgr.service "${pkgdir}/usr/lib/systemd/system/multi-user.target.wants/nvidia-vgpu-mgr.service"
 
     # nvidia-cuda-mps
     install -D -m755 nvidia-cuda-mps-server "${pkgdir}/usr/bin/nvidia-cuda-mps-server"

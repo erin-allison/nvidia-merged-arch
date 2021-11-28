@@ -12,6 +12,7 @@ These packages are not guaranteed to work out of the box (or at all), so use it 
 1. Download the 460.73.01/02 merged driver package and place it in the root of this repository named `NVIDIA-Linux-x86_64-460.73.01-grid-vgpu-kvm-v5.run` (update the checksum in `PKGBUILD.nvidia-merged` if necessary).
 2. Run the `build.sh` script and then install packages from `./out/` as desired.
 3. Copy the default `profile_override.toml` into `/etc/vgpu_unlock` and edit.
+4. Enable `nvidia-vgpu-mgr.service` and `nvidia-vgpud.service`
 4. Reboot.
 
 It is recommended to at least install `nvidia-merged`, `nvidia-merged-settings` and `vgpu_unlock-rs`, which will include the required services/kernel module sources by dependency as well as the Rust edition vGPU-Unlock.
