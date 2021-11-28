@@ -8,6 +8,9 @@ This repository contains scripts for building all components of the "merged" dri
 ## Important
 These packages are not guaranteed to work out of the box (or at all), so use it at your own risk. Backups should be taken before attempting to replace stock NVIDIA drivers on any system.
 
+## Prerequisites
+Make sure that all Dependencies are installed `pacman -Syu patchelf gcc rust`
+
 ## Installation
 1. Download the 460.73.01/02 merged driver package and place it in the root of this repository named `NVIDIA-Linux-x86_64-460.73.01-grid-vgpu-kvm-v5.run` (update the checksum in `PKGBUILD.nvidia-merged` if necessary).
 2. Run the `build.sh` script and then install packages from `./out/` as desired.
