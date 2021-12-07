@@ -1,3 +1,0 @@
-post_install() {
-	echo "Copy the default override from '/usr/share/vgpu_unlock' into '/etc/vgpu_unlock', edit as desired, and reboot."
-}

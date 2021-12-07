@@ -2,22 +2,24 @@
 
 pkgname=('nvidia-merged' 'lib32-nvidia-merged-utils' 'lib32-opencl-nvidia-merged' 'nvidia-merged-dkms' 'nvidia-merged-settings' 'nvidia-merged-utils' 'opencl-nvidia-merged')
 pkgver=460.73.01
-pkgrel=6
+pkgrel=7
 arch=('x86_64')
 makedepends=('gcc' 'rust')
-url='https://docs.google.com/document/d/1pzrWJ9h-zANCtyqRgS7Vzla0Y8Ea2-5z2HEi4X75d2Q/'
+url='https://krutavshah.github.io/GPU_Virtualization-Wiki/'
 license=('custom')
 options=('!strip')
 _pkg="NVIDIA-Linux-${CARCH}-${pkgver}-grid-vgpu-kvm-v5"
 _vgpuver=460.73.02
-source=("${_pkg}.run" 'nvidia-drm-outputclass.conf' 'cvgpu.conf' 'nvidia-vgpu.conf' 'nvidia-smi'
-    'https://gist.githubusercontent.com/HiFiPhile/b3267ce1e93f15642ce3943db6e60776/raw/ab7ad3b2700b25150b1b16e9b3c4aa6d46b69099/cvgpu.c')
-sha256sums=('0bc28cf13c1a4d8845c7f8987974e04bd52734321bb8db526c6938530ad12c71'
+source=('nvidia-drm-outputclass.conf' 'nvidia-smi' 'nvidia-vgpu.conf' 'vgpu_unlock-rs.conf' 'twelve.patch' 'fourteen.patch'
+    'git+https://github.com/mbilker/vgpu_unlock-rs.git#commit=3ca0999')
+sha256sums=(
     'be99ff3def641bb900c2486cce96530394c5dc60548fc4642f19d3a4c784134d'
-    '6e99e446fdb4583d57658bce97b1ff66e45891a9fe089a81f5ab8fea7ab4d763'
+    '88111af630865f9321c5eebf1b87550bd47f819eb0179854c2fa0c74c8880950'
     '5ea0d9edfcf282cea9b204291716a9a4d6d522ba3a6bc28d78edf505b6dc7949'
-    '17a87fcace96fb8dedd19bbe1ee2f8dea6c743338ca5d851456797d319262a23'
-    '1afd782be6409fbfe91b93853bebdab4bf8bc014e3a69b362335308e437b10ab')
+    'c85ae100a6c87c12906fd0057b77c0c4190f68434de4bc3bc89348ffc19aed61'
+    '8c374e9e6053c20b0bcf71faf33adfa2659c1020ce1f38d469b42dd2bbda9749'
+    'affb0b2fde720ee7963746bc7a4eda459b1dd1a8a5650b4ae2de64c9e6cf54f1'
+    'SKIP')
 
 create_links() {
     # create soname links
@@ -30,14 +32,33 @@ create_links() {
 }
 
 prepare() {
-    sh "${_pkg}.run" --extract-only
+    fileid='1dCyUteA2MqJaemRKqqTu5oed5mINu9Bw'
+    filename="${_pkg}.run"
+
+    echo "Downloading merged driver..."
+
+    curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}" > /dev/null
+    curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o $filename
+
+    sh $filename -x
 
     cd "${_pkg}"
 
     sed -i '/Environment=LD_PRELOAD.*/D' init-scripts/systemd/nvidia-vgpud.service
     sed -i '/Environment=LD_PRELOAD.*/D' init-scripts/systemd/nvidia-vgpu-mgr.service
 
+    sed -i 's|/usr/bin/vgpu_unlock ||' init-scripts/systemd/nvidia-vgpud.service
+    sed -i 's|/usr/bin/vgpu_unlock ||' init-scripts/systemd/nvidia-vgpu-mgr.service
+
     cd kernel
+
+    mkdir patches
+
+    cp "${srcdir}/twelve.patch" patches/
+    cp "${srcdir}/fourteen.patch" patches/
+
+    patch -R -p1 < patches/twelve.patch
+
     sed -i "s/__VERSION_STRING/${pkgver}/" dkms.conf
     sed -i 's/__JOBS/`nproc`/' dkms.conf
     sed -i 's/__DKMS_MODULES//' dkms.conf
@@ -50,7 +71,18 @@ DEST_MODULE_LOCATION[2]="/kernel/drivers/video"\
 BUILT_MODULE_NAME[3]="nvidia-drm"\
 DEST_MODULE_LOCATION[3]="/kernel/drivers/video"\
 BUILT_MODULE_NAME[4]="nvidia-vgpu-vfio"\
-DEST_MODULE_LOCATION[4]="/kernel/drivers/video"' dkms.conf
+DEST_MODULE_LOCATION[4]="/kernel/drivers/video"\
+\
+PATCH[0]="twelve.patch"\
+PATCH_MATCH[0]="^5.1[2345].*$"\
+PATCH[1]="fourteen.patch"\
+PATCH_MATCH[1]="^5\.1[45].*$"' dkms.conf
+}
+
+build() {
+    cd "${srcdir}/vgpu_unlock-rs"
+
+    cargo build --release
 }
 
 package_opencl-nvidia-merged() {
@@ -58,6 +90,7 @@ package_opencl-nvidia-merged() {
     depends=('zlib')
     optdepends=('opencl-headers: headers necessary for OpenCL development')
     provides=('opencl-driver' 'opencl-nvidia')
+
     cd "${_pkg}"
 
     # OpenCL
@@ -72,10 +105,10 @@ package_opencl-nvidia-merged() {
 
 package_nvidia-merged-dkms() {
     pkgdesc="NVIDIA drivers - module sources; patched for vGPU support w/ C unlock"
-    depends=('dkms' "nvidia-merged-utils=${pkgver}" 'libglvnd' 'linux<5.13')
+    depends=('dkms' "nvidia-merged-utils=${pkgver}" 'libglvnd')
     provides=('NVIDIA-MODULE' 'nvidia-dkms')
 
-    cd ${_pkg}
+    cd "${_pkg}"
 
     install -dm 755 "${pkgdir}"/usr/src
     cp -dr --no-preserve='ownership' kernel "${pkgdir}/usr/src/nvidia-${pkgver}"
@@ -123,12 +156,11 @@ package_nvidia-merged-utils() {
     optdepends=("nvidia-merged-settings=${pkgver}: configuration tool"
                 'xorg-server-devel: nvidia-xconfig'
                 "opencl-nvidia-merged=${pkgver}: OpenCL support"
-                'vgpu_unlock'
                 'mdevctl: mediated device contfiguration tool'
                 'libvirt: virtualization engine control interface')
     conflicts=('nvidia-libgl')
-    provides=('vulkan-driver' 'opengl-driver' 'nvidia-libgl')
-    replaces=('nvidia-libgl')
+    provides=('vulkan-driver' 'opengl-driver' 'nvidia-libgl' 'vgpu_unlock')
+    replaces=('nvidia-libgl' 'vgpu_unlock')
     install="${pkgname}.install"
 
     cd "${_pkg}"
@@ -205,10 +237,8 @@ package_nvidia-merged-utils() {
     install -D -m755 nvidia-bug-report.sh "${pkgdir}/usr/bin/nvidia-bug-report.sh"
 
     # nvidia-smi
-    gcc -fPIC -shared -o "${srcdir}/cvgpu.o" "${srcdir}/cvgpu.c"
     install -D -m755 nvidia-smi "${pkgdir}/usr/lib/nvidia/nvidia-smi.orig"
     install -D -m644 nvidia-smi.1.gz "${pkgdir}/usr/share/man/man1/nvidia-smi.1.gz"
-    install -D -m755 "${srcdir}/cvgpu.o" "${pkgdir}/usr/lib/nvidia/cvgpu.o"
     install -D -m755 "${srcdir}/nvidia-smi" "${pkgdir}/usr/bin/nvidia-smi"
 
     # nvidia-vgpu
@@ -217,8 +247,8 @@ package_nvidia-merged-utils() {
     install -D -m644 vgpuConfig.xml "${pkgdir}/usr/share/nvidia/vgpu/vgpuConfig.xml"
     install -D -m644 init-scripts/systemd/nvidia-vgpud.service "${pkgdir}/usr/lib/systemd/system/nvidia-vgpud.service"
     install -D -m644 init-scripts/systemd/nvidia-vgpu-mgr.service "${pkgdir}/usr/lib/systemd/system/nvidia-vgpu-mgr.service"
-    install -D -m644 "${srcdir}/cvgpu.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpud.service.d/20-cvgpu.conf"
-    install -D -m644 "${srcdir}/cvgpu.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpu-mgr.service.d/20-cvgpu.conf"
+    install -D -m644 "${srcdir}/vgpu_unlock-rs.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpud.service.d/30-vgpu_unlock-rs.conf"
+    install -D -m644 "${srcdir}/vgpu_unlock-rs.conf" "${pkgdir}/usr/lib/systemd/system/nvidia-vgpu-mgr.service.d/30-vgpu_unlock-rs.conf"
     install -D -m644 "${srcdir}/nvidia-vgpu.conf" "${pkgdir}/usr/lib/systemd/system/libvirtd.service.d/20-nvidia-vgpu.conf"
 
     # nvidia-cuda-mps
@@ -245,6 +275,9 @@ package_nvidia-merged-utils() {
     install -D -m644 "${srcdir}/nvidia-drm-outputclass.conf" "${pkgdir}/usr/share/X11/xorg.conf.d/10-nvidia-drm-outputclass.conf"
 
     create_links
+
+    # vgpu_unlock-rs
+    install -D -m755 "${srcdir}/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" "${pkgdir}/usr/lib/nvidia/libvgpu_unlock_rs.so"
 }
 
 package_lib32-nvidia-merged-utils() {
@@ -254,7 +287,7 @@ package_lib32-nvidia-merged-utils() {
     provides=('lib32-vulkan-driver' 'lib32-opengl-driver' 'lib32-nvidia-libgl' 'lib32-nvidia-utils')
     replaces=('lib32-nvidia-libgl')
 
-    cd "${_pkg}"/32
+    cd "${_pkg}/32"
 
     install -D -m755 "libGLX_nvidia.so.${pkgver}" "${pkgdir}/usr/lib32/libGLX_nvidia.so.${pkgver}"
 
@@ -305,7 +338,7 @@ package_lib32-opencl-nvidia-merged() {
     optdepends=('opencl-headers: headers necessary for OpenCL development')
     provides=('lib32-opencl-driver' 'lib32-opencl-nvidia')
 
-    cd "${_pkg}"/32
+    cd "${_pkg}/32"
 
     # OpenCL
     install -D -m755 "libnvidia-compiler.so.${pkgver}" "${pkgdir}/usr/lib32/libnvidia-compiler.so.${pkgver}"

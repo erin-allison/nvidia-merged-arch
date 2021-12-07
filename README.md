@@ -2,20 +2,25 @@
 Use Nvidia vGPU _and_ GeForce functions of consumer-grade NVIDIA GPUs.
 
 This repository contains scripts for building all components of the "merged" driver package into drop-in replacements for the Arch Linux NVIDIA packages. It adds the following additional functions by means of scripts/drop-ins:
- - Wrapper for `nvidia-smi` to support recognizing consumer GPUs as vGPU-capable (uses cvgpu.c)
+ - Wrapper for `nvidia-smi` to support recognizing consumer GPUs as vGPU-capable
  - Dependency re-ordering to ensure `libvirtd`, if installed, will start _after_ the NVIDIA vGPU services.
+
+Compatible Linux Versions:
+- Various 5.11 or older releases
+- 5.12
+- 5.14 except for some of the earlier 5.14 releases
+- 5.15
 
 ## Important
 These packages are not guaranteed to work out of the box (or at all), so use it at your own risk. Backups should be taken before attempting to replace stock NVIDIA drivers on any system.
 
 ## Installation
-1. Download the 460.73.01/02 merged driver package and place it in the root of this repository named `NVIDIA-Linux-x86_64-460.73.01-grid-vgpu-kvm-v5.run` (update the checksum in `PKGBUILD.nvidia-merged` if necessary).
-2. Run the `build.sh` script and then install packages from `./out/` as desired.
-3. Copy the default `profile_override.toml` into `/etc/vgpu_unlock` and edit.
-4. Enable `nvidia-vgpu-mgr.service` and `nvidia-vgpud.service`
+1. Run the `build.sh` script and then install packages from `./out/` as desired.
+2. Create `/etc/vgpu_unlock/profile_override.toml` with desired content.
+3. Enable `nvidia-vgpu-mgr.service` and `nvidia-vgpud.service`
 4. Reboot.
 
-It is recommended to at least install `nvidia-merged`, `nvidia-merged-settings` and `vgpu_unlock-rs`, which will include the required services/kernel module sources by dependency as well as the Rust edition vGPU-Unlock.
+It is recommended to at least install `nvidia-merged` and `nvidia-merged-settings`, which will include the required services/kernel module sources by dependency.
 
 ## Credits
 This project would not be possible without all those who came before me that wrote the software and figured out how to implement it:

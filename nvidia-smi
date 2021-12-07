@@ -4,7 +4,7 @@ for a in $*
 do
   case $a in
     vgpu)
-      export LD_PRELOAD="/usr/lib/nvidia/cvgpu.o"
+      export LD_PRELOAD="/usr/lib/nvidia/libvgpu_unlock_rs.so"
       ;;
   esac
 done
