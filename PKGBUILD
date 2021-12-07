@@ -104,7 +104,7 @@ package_opencl-nvidia-merged() {
 }
 
 package_nvidia-merged-dkms() {
-    pkgdesc="NVIDIA drivers - module sources; patched for vGPU support w/ C unlock"
+    pkgdesc="NVIDIA drivers - module sources; patched for vGPU support w/ Rust unlock"
     depends=('dkms' "nvidia-merged-utils=${pkgver}" 'libglvnd')
     provides=('NVIDIA-MODULE' 'nvidia-dkms')
 
@@ -141,7 +141,7 @@ package_nvidia-merged-settings() {
 }
 
 package_nvidia-merged() {
-    pkgdesc='NVIDIA drivers for linux; patched for vGPU support w/ C unlock'
+    pkgdesc='NVIDIA drivers for linux; patched for vGPU support w/ Rust unlock'
     depends=('libglvnd' "nvidia-merged-dkms=${pkgver}" "nvidia-merged-utils=${pkgver}")
     optdepends=("lib32-nvidia-merged-utils=${pkgver}" "lib32-opencl-nvidia-merged=${pkgver}")
     provides=('nvidia')
@@ -151,7 +151,7 @@ package_nvidia-merged() {
 }
 
 package_nvidia-merged-utils() {
-    pkgdesc="NVIDIA drivers utilities; patched for vGPU support w/ C unlock"
+    pkgdesc="NVIDIA drivers utilities; patched for vGPU support w/ Rust unlock"
     depends=('xorg-server' 'libglvnd' 'egl-wayland')
     optdepends=("nvidia-merged-settings=${pkgver}: configuration tool"
                 'xorg-server-devel: nvidia-xconfig'
@@ -281,7 +281,7 @@ package_nvidia-merged-utils() {
 }
 
 package_lib32-nvidia-merged-utils() {
-    pkgdesc="NVIDIA drivers utilities; patched for vGPU support w/ C unlock (32-bit)"
+    pkgdesc="NVIDIA drivers utilities; patched for vGPU support w/ Rust unlock (32-bit)"
     depends=('lib32-zlib' 'lib32-gcc-libs' 'lib32-libglvnd' "nvidia-merged-utils=${pkgver}")
     optdepends=("lib32-opencl-nvidia=${pkgver}")
     provides=('lib32-vulkan-driver' 'lib32-opengl-driver' 'lib32-nvidia-libgl' 'lib32-nvidia-utils')
