@@ -74,7 +74,7 @@ BUILT_MODULE_NAME[4]="nvidia-vgpu-vfio"\
 DEST_MODULE_LOCATION[4]="/kernel/drivers/video"\
 \
 PATCH[0]="twelve.patch"\
-PATCH_MATCH[0]="^5.1[2345].*$"\
+PATCH_MATCH[0]="^5.1[012345].*$"\
 PATCH[1]="fourteen.patch"\
 PATCH_MATCH[1]="^5\.1[45].*$"' dkms.conf
 }
