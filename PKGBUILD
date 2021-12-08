@@ -10,7 +10,7 @@ license=('custom')
 options=('!strip')
 _pkg="NVIDIA-Linux-${CARCH}-${pkgver}-grid-vgpu-kvm-v5"
 _vgpuver=460.73.02
-source=('nvidia-drm-outputclass.conf' 'nvidia-smi' 'nvidia-vgpu.conf' 'vgpu_unlock-rs.conf' 'twelve.patch' 'fourteen.patch'
+source=('nvidia-drm-outputclass.conf' 'nvidia-smi' 'nvidia-vgpu.conf' 'vgpu_unlock-rs.conf' 'fourteen.patch'
     'git+https://github.com/mbilker/vgpu_unlock-rs.git#commit=3ca0999')
 sha256sums=(
     'be99ff3def641bb900c2486cce96530394c5dc60548fc4642f19d3a4c784134d'
@@ -54,10 +54,7 @@ prepare() {
 
     mkdir patches
 
-    cp "${srcdir}/twelve.patch" patches/
     cp "${srcdir}/fourteen.patch" patches/
-
-    patch -R -p1 < patches/twelve.patch
 
     sed -i "s/__VERSION_STRING/${pkgver}/" dkms.conf
     sed -i 's/__JOBS/`nproc`/' dkms.conf
@@ -73,10 +70,8 @@ DEST_MODULE_LOCATION[3]="/kernel/drivers/video"\
 BUILT_MODULE_NAME[4]="nvidia-vgpu-vfio"\
 DEST_MODULE_LOCATION[4]="/kernel/drivers/video"\
 \
-PATCH[0]="twelve.patch"\
-PATCH_MATCH[0]="^5.1[2345].*$"\
-PATCH[1]="fourteen.patch"\
-PATCH_MATCH[1]="^5\.1[45].*$"' dkms.conf
+PATCH[0]="fourteen.patch"\
+PATCH_MATCH[0]="^5\.1[45].*$"' dkms.conf
 }
 
 build() {
@@ -104,7 +99,7 @@ package_opencl-nvidia-merged() {
 }
 
 package_nvidia-merged-dkms() {
-    pkgdesc="NVIDIA drivers - module sources; patched for vGPU support w/ Rust unlock"
+    pkgdesc="NVIDIA drivers - module sources; patched for vGPU support w/ C unlock"
     depends=('dkms' "nvidia-merged-utils=${pkgver}" 'libglvnd')
     provides=('NVIDIA-MODULE' 'nvidia-dkms')
 
@@ -141,7 +136,7 @@ package_nvidia-merged-settings() {
 }
 
 package_nvidia-merged() {
-    pkgdesc='NVIDIA drivers for linux; patched for vGPU support w/ Rust unlock'
+    pkgdesc='NVIDIA drivers for linux; patched for vGPU support w/ C unlock'
     depends=('libglvnd' "nvidia-merged-dkms=${pkgver}" "nvidia-merged-utils=${pkgver}")
     optdepends=("lib32-nvidia-merged-utils=${pkgver}" "lib32-opencl-nvidia-merged=${pkgver}")
     provides=('nvidia')
@@ -151,7 +146,7 @@ package_nvidia-merged() {
 }
 
 package_nvidia-merged-utils() {
-    pkgdesc="NVIDIA drivers utilities; patched for vGPU support w/ Rust unlock"
+    pkgdesc="NVIDIA drivers utilities; patched for vGPU support w/ C unlock"
     depends=('xorg-server' 'libglvnd' 'egl-wayland')
     optdepends=("nvidia-merged-settings=${pkgver}: configuration tool"
                 'xorg-server-devel: nvidia-xconfig'
@@ -281,7 +276,7 @@ package_nvidia-merged-utils() {
 }
 
 package_lib32-nvidia-merged-utils() {
-    pkgdesc="NVIDIA drivers utilities; patched for vGPU support w/ Rust unlock (32-bit)"
+    pkgdesc="NVIDIA drivers utilities; patched for vGPU support w/ C unlock (32-bit)"
     depends=('lib32-zlib' 'lib32-gcc-libs' 'lib32-libglvnd' "nvidia-merged-utils=${pkgver}")
     optdepends=("lib32-opencl-nvidia=${pkgver}")
     provides=('lib32-vulkan-driver' 'lib32-opengl-driver' 'lib32-nvidia-libgl' 'lib32-nvidia-utils')
