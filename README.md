@@ -16,7 +16,7 @@ These packages are not guaranteed to work out of the box (or at all), so use it 
 
 ## Installation
 1. Run the `build.sh` script and then install packages from `./out/` as desired.
-2. Create `/etc/vgpu_unlock/profile_override.toml` with desired content.
+2. Edit `/etc/vgpu_unlock/profile_override.toml` and set desired overrides.
 3. Enable `nvidia-vgpu-mgr.service` and `nvidia-vgpud.service`
 4. Reboot.
 
