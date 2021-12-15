@@ -159,7 +159,7 @@ package_nvidia-merged-utils() {
                 'mdevctl: mediated device contfiguration tool'
                 'libvirt: virtualization engine control interface')
     conflicts=('nvidia-libgl')
-    provides=('vulkan-driver' 'opengl-driver' 'nvidia-libgl' 'vgpu_unlock')
+    provides=('vulkan-driver' 'opengl-driver' 'nvidia-libgl' 'nvidia-merged' 'vgpu_unlock')
     replaces=('nvidia-libgl' 'vgpu_unlock')
     install="${pkgname}.install"
 
