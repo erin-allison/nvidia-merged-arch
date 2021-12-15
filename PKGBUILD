@@ -11,6 +11,7 @@ options=('!strip')
 _pkg="NVIDIA-Linux-${CARCH}-${pkgver}-grid-vgpu-kvm-v5"
 _vgpuver=460.73.02
 source=('nvidia-drm-outputclass.conf' 'nvidia-smi' 'nvidia-vgpu.conf' 'vgpu_unlock-rs.conf' 'twelve.patch' 'fourteen.patch'
+    "${_pkg}.run::gdrive://1dCyUteA2MqJaemRKqqTu5oed5mINu9Bw"
     'git+https://github.com/mbilker/vgpu_unlock-rs.git#commit=3ca0999')
 sha256sums=(
     'be99ff3def641bb900c2486cce96530394c5dc60548fc4642f19d3a4c784134d'
@@ -19,6 +20,7 @@ sha256sums=(
     'c85ae100a6c87c12906fd0057b77c0c4190f68434de4bc3bc89348ffc19aed61'
     '8c374e9e6053c20b0bcf71faf33adfa2659c1020ce1f38d469b42dd2bbda9749'
     'affb0b2fde720ee7963746bc7a4eda459b1dd1a8a5650b4ae2de64c9e6cf54f1'
+    '0bc28cf13c1a4d8845c7f8987974e04bd52734321bb8db526c6938530ad12c71'
     'SKIP')
 
 create_links() {
@@ -32,15 +34,15 @@ create_links() {
 }
 
 prepare() {
-    fileid='1dCyUteA2MqJaemRKqqTu5oed5mINu9Bw'
-    filename="${_pkg}.run"
+    #fileid='1dCyUteA2MqJaemRKqqTu5oed5mINu9Bw'
+    #filename="${_pkg}.run"
 
-    echo "Downloading merged driver..."
+    #echo "Downloading merged driver..."
 
-    curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}" > /dev/null
-    curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o $filename
+    #curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}" > /dev/null
+    #curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o $filename
 
-    sh $filename -x
+    sh "${_pkg}.run" -x
 
     cd "${_pkg}"
 
