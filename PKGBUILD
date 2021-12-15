@@ -162,6 +162,7 @@ package_nvidia-merged-utils() {
     provides=('vulkan-driver' 'opengl-driver' 'nvidia-libgl' 'nvidia-merged' 'vgpu_unlock')
     replaces=('nvidia-libgl' 'vgpu_unlock')
     install="${pkgname}.install"
+    backup=('etc/vgpu_unlock/profile_override.toml')
 
     cd "${_pkg}"
 
@@ -278,6 +279,7 @@ package_nvidia-merged-utils() {
 
     # vgpu_unlock-rs
     install -D -m755 "${srcdir}/vgpu_unlock-rs/target/release/libvgpu_unlock_rs.so" "${pkgdir}/usr/lib/nvidia/libvgpu_unlock_rs.so"
+    install -D -m644 /dev/null "${pkgdir}/etc/vgpu_unlock/profile_override.toml"
 }
 
 package_lib32-nvidia-merged-utils() {
