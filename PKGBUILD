@@ -2,7 +2,7 @@
 
 pkgname=('nvidia-merged' 'lib32-nvidia-merged-utils' 'lib32-opencl-nvidia-merged' 'nvidia-merged-dkms' 'nvidia-merged-settings' 'nvidia-merged-utils' 'opencl-nvidia-merged')
 pkgver=460.73.01
-pkgrel=7
+pkgrel=8
 arch=('x86_64')
 makedepends=('gcc' 'rust')
 url='https://krutavshah.github.io/GPU_Virtualization-Wiki/'
@@ -144,7 +144,7 @@ package_nvidia-merged-settings() {
 
 package_nvidia-merged() {
     pkgdesc='NVIDIA drivers for linux; patched for vGPU support w/ Rust unlock'
-    depends=('libglvnd' "nvidia-merged-dkms=${pkgver}" "nvidia-merged-utils=${pkgver}")
+    depends=("nvidia-merged-dkms=${pkgver}" "nvidia-merged-utils=${pkgver}")
     optdepends=("lib32-nvidia-merged-utils=${pkgver}" "lib32-opencl-nvidia-merged=${pkgver}")
     provides=('nvidia')
 
