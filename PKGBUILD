@@ -55,6 +55,8 @@ prepare() {
     sed -i 's|__UTILS_PATH__|/usr/bin|' nvidia-settings.desktop
     sed -i 's|__PIXMAP_PATH__|/usr/share/pixmaps|' nvidia-settings.desktop
 
+    gunzip nvidia-{cuda-mps-control,modprobe,settings,smi,xconfig}.1.gz
+
     cd kernel
 
     mkdir patches
@@ -134,7 +136,7 @@ package_nvidia-merged-settings() {
 
     install -D -m755 nvidia-settings "${pkgdir}/usr/bin/nvidia-settings"
     install -D -m644 "libnvidia-gtk3.so.${pkgver}" "${pkgdir}/usr/lib/libnvidia-gtk3.so.${pkgver}"
-    install -D -m644 nvidia-settings.1.gz "${pkgdir}/usr/share/man/man1/nvidia-settings.1.gz"
+    install -D -m644 nvidia-settings.1 "${pkgdir}/usr/share/man/man1/nvidia-settings.1"
     install -D -m644 nvidia-settings.png "${pkgdir}/usr/share/pixmaps/nvidia-settings.png"
     install -D -m644 nvidia-settings.desktop "${pkgdir}/usr/share/applications/nvidia-settings.desktop"
 
@@ -236,14 +238,14 @@ package_nvidia-merged-utils() {
 
     # nvidia-xconfig
     install -D -m755 nvidia-xconfig "${pkgdir}/usr/bin/nvidia-xconfig"
-    install -D -m644 nvidia-xconfig.1.gz "${pkgdir}/usr/share/man/man1/nvidia-xconfig.1.gz"
+    install -D -m644 nvidia-xconfig.1 "${pkgdir}/usr/share/man/man1/nvidia-xconfig.1"
 
     # nvidia-bug-report
     install -D -m755 nvidia-bug-report.sh "${pkgdir}/usr/bin/nvidia-bug-report.sh"
 
     # nvidia-smi
     install -D -m755 nvidia-smi "${pkgdir}/usr/lib/nvidia/nvidia-smi.orig"
-    install -D -m644 nvidia-smi.1.gz "${pkgdir}/usr/share/man/man1/nvidia-smi.1.gz"
+    install -D -m644 nvidia-smi.1 "${pkgdir}/usr/share/man/man1/nvidia-smi.1"
     install -D -m755 "${srcdir}/nvidia-smi" "${pkgdir}/usr/bin/nvidia-smi"
 
     # nvidia-vgpu
@@ -259,12 +261,12 @@ package_nvidia-merged-utils() {
     # nvidia-cuda-mps
     install -D -m755 nvidia-cuda-mps-server "${pkgdir}/usr/bin/nvidia-cuda-mps-server"
     install -D -m755 nvidia-cuda-mps-control "${pkgdir}/usr/bin/nvidia-cuda-mps-control"
-    install -D -m644 nvidia-cuda-mps-control.1.gz "${pkgdir}/usr/share/man/man1/nvidia-cuda-mps-control.1.gz"
+    install -D -m644 nvidia-cuda-mps-control.1 "${pkgdir}/usr/share/man/man1/nvidia-cuda-mps-control.1"
 
     # nvidia-modprobe
     # This should be removed if nvidia fixed their uvm module!
     install -D -m4755 nvidia-modprobe "${pkgdir}/usr/bin/nvidia-modprobe"
-    install -D -m644 nvidia-modprobe.1.gz "${pkgdir}/usr/share/man/man1/nvidia-modprobe.1.gz"
+    install -D -m644 nvidia-modprobe.1 "${pkgdir}/usr/share/man/man1/nvidia-modprobe.1"
 
     # application profiles
     install -D -m644 nvidia-application-profiles-${pkgver}-rc "${pkgdir}/usr/share/nvidia/nvidia-application-profiles-${pkgver}-rc"
