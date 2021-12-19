@@ -52,6 +52,9 @@ prepare() {
     sed -i 's|/usr/bin/vgpu_unlock ||' init-scripts/systemd/nvidia-vgpud.service
     sed -i 's|/usr/bin/vgpu_unlock ||' init-scripts/systemd/nvidia-vgpu-mgr.service
 
+    sed -i 's|__UTILS_PATH__|/usr/bin|' nvidia-settings.desktop
+    sed -i 's|__PIXMAP_PATH__|/usr/share/pixmaps|' nvidia-settings.desktop
+
     cd kernel
 
     mkdir patches
@@ -128,7 +131,6 @@ package_nvidia-merged-settings() {
 
     cd "${_pkg}"
 
-    sed -i 's|__UTILS_PATH__|/usr/bin|' nvidia-settings.desktop
 
     install -D -m755 nvidia-settings "${pkgdir}/usr/bin/nvidia-settings"
     install -D -m644 "libnvidia-gtk3.so.${pkgver}" "${pkgdir}/usr/lib/libnvidia-gtk3.so.${pkgver}"
