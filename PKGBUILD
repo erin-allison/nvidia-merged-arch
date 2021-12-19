@@ -1,13 +1,15 @@
 # Maintainer: Erin Allison <erin@eallison.us>
 
+pkgbase='nvidia-merged'
 pkgname=('nvidia-merged' 'lib32-nvidia-merged-utils' 'lib32-opencl-nvidia-merged' 'nvidia-merged-dkms' 'nvidia-merged-settings' 'nvidia-merged-utils' 'opencl-nvidia-merged')
 pkgver=460.73.01
-pkgrel=8
+pkgrel=9
 arch=('x86_64')
 makedepends=('gcc' 'rust')
 url='https://krutavshah.github.io/GPU_Virtualization-Wiki/'
 license=('custom')
 options=('!strip')
+groups=('nvidia-merged')
 _pkg="NVIDIA-Linux-${CARCH}-${pkgver}-grid-vgpu-kvm-v5"
 _vgpuver=460.73.02
 source=('nvidia-drm-outputclass.conf' 'nvidia-smi' 'nvidia-vgpu.conf' 'vgpu_unlock-rs.conf' 'twelve.patch' 'fourteen.patch'
@@ -23,6 +25,8 @@ sha256sums=(
     '0bc28cf13c1a4d8845c7f8987974e04bd52734321bb8db526c6938530ad12c71'
     'SKIP')
 
+DLAGENTS=("gdrive::/usr/bin/bash -c cookie=\$(mktemp);id=\$(echo\ %u\ |cut\ -f3\ -d'/');curl\ -qgb\ \"\$cookie\"\ -c\ \"\$cookie\"\ -fLC\ -\ --retry\ 3\ --retry-delay\ 3\ https://drive.google.com/uc?export=download\\\&id=\$id\ -o\ /dev/null;curl\ -qgb\ \"\$cookie\"\ -c\ \"\$cookie\"\ -fLC\ -\ --retry\ 3\ --retry-delay\ 3\ https://drive.google.com/uc?export=download\\\&confirm=\`egrep\ download.+\$id\ \"\$cookie\"|cut\ -f7\`\\\&id=\$id\ -o\ %o")
+
 create_links() {
     # create soname links
     find "$pkgdir" -type f -name '*.so*' ! -path '*xorg/*' -print0 | while read -d $'\0' _lib; do
@@ -34,14 +38,6 @@ create_links() {
 }
 
 prepare() {
-    #fileid='1dCyUteA2MqJaemRKqqTu5oed5mINu9Bw'
-    #filename="${_pkg}.run"
-
-    #echo "Downloading merged driver..."
-
-    #curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}" > /dev/null
-    #curl -Lb ./cookie "https://drive.google.com/uc?export=download&confirm=`awk '/download/ {print $NF}' ./cookie`&id=${fileid}" -o $filename
-
     sh "${_pkg}.run" -x
 
     cd "${_pkg}"
