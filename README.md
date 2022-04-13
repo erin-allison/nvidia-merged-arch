@@ -1,3 +1,5 @@
+## This repository is deprecated in favor of https://github.com/erin-allison/aur-packages/tree/master/nvidia-merged
+
 # Nvidia vGPU-Merged Packages for Arch Linux
 Use Nvidia vGPU _and_ GeForce functions of consumer-grade NVIDIA GPUs.
 
